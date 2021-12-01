@@ -7,31 +7,18 @@ die: a paper template
 
   - Python 3.x
   - pygmentize
+  - texlive
 
-    $ pip install Pygments 
+    $ ./bin/deps.sh
 
-1. clone the git repo:
-
-  - if you have none,
-
-    $ git clone --depth=1 git@github.com:tsgates/die.git
-
-  - if you have a git-repo to work on,
-
-    $ git subtree add --squash git@github.com:tsgates/die.git master -P paper
-
-  - or
-
-    $ wget https://github.com/tsgates/die/releases/download/latest/die.tar.gz
-
-2. build it:
+1. build it:
 
     $ make
     p.pdf built @Tue May 20 20:38:19 EDT 2014
     
     (check p.pdf)
 
-3. starting point, p.tex:
+2. starting point, p.tex:
 
     $ grep -oP 'input{\K\w+' p.tex
     cmds
@@ -50,12 +37,12 @@ die: a paper template
   - hdr: includes title/author info
   - ex : includes latex examples
 
-4. example latex
+3. example latex
 
     $ git checkout example
     $ make
 
-5. formatting rules (dependencies)
+4. formatting rules (dependencies)
 
   - code/*.{c,cc,py,js ...} -> code/*.tex
   - fig/*.svg               -> fig/*.pdf
@@ -81,6 +68,10 @@ die: a paper template
 4. spell check
 
     $ make spell
+
+5. text extraction
+
+    $ make text
 
 ## Acknowledgment
 
