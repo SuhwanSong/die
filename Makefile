@@ -80,4 +80,7 @@ distclean: clean ## clean up completely
 abstract.txt: abstract.tex $(MAIN).tex ## generate abstract.txt
 	@bin/mkabstract $(MAIN).tex $< | fmt -w72 > $@
 
+text: 
+	@bin/mktext p.tex
+ 
 .PHONY: all help FORCE draft clean spell distclean init bib
