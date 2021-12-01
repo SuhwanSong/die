@@ -4,31 +4,22 @@ die: a paper template
   - Python 3.x
   - pygmentize
   - texlive
- ``` $ ./bin/deps.sh ```
+
+ ```shell
+ $ ./bin/deps.sh 
+ ```
 
 ### 2. Build
-``` $ make ```
-    (check p.pdf)
+```shell 
+$ make 
+```
+
+(check p.pdf)
 
 ### 3. Files
-```
-    $ grep -oP 'input{\K\w+' p.tex
-```
-    cmds
-    rev
-   *hdr
-    abstract
-   *ex
-    intro
-    overview
-    design
-    impl
-    eval
-    conclusion
-    ack
 
-  - hdr: includes title/author info
-  - ex : includes latex examples
+  - p.tex -> main tex file
+  - hdr.tex -> title and authors
 
 ### 4. Formatting Rules (dependencies)
 
@@ -40,25 +31,25 @@ die: a paper template
 
 #### 1. make a draft for revision
 ```shell
-    $ make draft
-    $ make watermark
+$ make draft
+$ make watermark
 ```
 #### 2. abstract.txt (from abstract.tex)
 ```shell
-    $ cat abstract.txt 
+$ cat abstract.txt 
 ```
 
 #### 3. highlight changes, since the last submit
 ```shell
-    $ make diff DIFF=HEAD@{}
+$ make diff DIFF=HEAD@{}
 ```
 
 #### 4. spell check
 ```shell
-    $ make spell
+$ make spell
 ```
 
 #### 5. text extraction
 ```shell
-    $ make text
+$ make text
 ```
