@@ -76,7 +76,7 @@ files = get_latex_files(pn_main_text)
 
 remove_prefix = ['section', 'subsection', 'labels:', 'PP', 'labelss:', 'labelfig:']
 
-def ext_text(f):
+def extract_text(f):
     textlines = []
     for l in open(f):
         l = l.strip()
@@ -90,68 +90,64 @@ def ext_text(f):
     
         for k, v in kw.items():
             l = l.replace("\\%s" % k, v)
-        
-        l = re.sub(r'(?s)(cite\{)(.*?)(\})', r'[]', l)
-        l = re.sub(r'(?s)(autoref\{)(.*?)(\})', r'[]', l)
-        l = re.sub(r'(?s)(vspace\{)(.*?)(\})', r'', l)
-        l = l.replace('\\noindent', '')
-        l = l.replace('\\bf', '')
-    
-        l = l.replace("\\%", "%")
-        l = l.replace("\\emph{", "")
-        l = l.replace("\\cc{", "")
-        l = l.replace("\\mbox{", "")
-        l = l.replace("{", "")
-        l = l.replace("}", "")
-        l = l.replace("~", " ")
-        l = l.replace("\\,", " ")
-        l = l.replace("\\X", "x")
-        l = l.replace("\\&", "&")
-        l = l.replace("\\@", "")
-        l = l.replace("\\$", "$")
-        l = l.replace("---", " -- ")
-        l = l.replace("--", "-")
-        l = l.replace("``", "'")
-        l = l.replace("''", "'")
-        l = l.replace("\\ie", "i.e.")
-        l = l.replace("\\eg", "e.g.")
-        l = l.replace("\\etal", " et al.")
-        l = l.replace("\\Bs", " B/s")
-        l = l.replace("\\KBs", " KB/s")
-        l = l.replace("\\MBs", " MB/s")
-        l = l.replace("\\GBs", " GB/s")
-        l = l.replace("\\KB", " KB")
-        l = l.replace("\\MB", " MB")
-        l = l.replace("\\GB", " GB")
-        l = l.replace("\\TB", " TB")
-        l = l.replace("\\B", " B")
-        l = l.replace("\\K", " K")
-        l = l.replace("\\M", " M")
-        l = l.replace("\\T", " T")
-        l = l.replace("\\", "")
-    
-        if "\\" in l:
-            print("WARN: unresolved char in", file=sys.stderr)
-            print(" > %s" % l, file=sys.stderr)
-        
-        
-        for prefix in remove_prefix:
-            if l.startswith(prefix):
-                l = ''
-                break
-        
-        if l: textlines.append(l)
-    text = "\n".join(textlines)
-    #text = re.sub(r'(?s)(\(autoref)(.*?)(\))', r'[]', text)
-    text = re.sub(r'(?s)(beginfigure)(.*?)(endfigure)', r' ', text)
-    text = re.sub(r'(?s)(beginenumerate)(.*?)(endenumerate)', r' ', text)
-    text = text.replace('\n', ' ')
-    return text
+        textlines.append(l)
+
+    l = ' '.join(textlines)
+    l = re.sub(r'(?s)(\\section\{)(.*?)(\})', r'', l)
+    l = re.sub(r'(?s)(\\subsection\{)(.*?)(\})', r'', l)
+    l = re.sub(r'(?s)(\\label\{)(.*?)(\})', r'[]', l)
+    l = re.sub(r'(?s)(\\footnote\{)(.*?)(\})', r'[footnote]', l)
+    l = re.sub(r'(?s)(\\begin\{figure)(.*?)(\\end\{figure\})', r'', l)
+    l = re.sub(r'(?s)(\\begin\{figure\*)(.*?)(\\end\{figure\*\})', r'', l)
+    l = re.sub(r'(?s)(\\begin\{itemize)(.*?)(\\end\{itemize\})', r'', l)
+    l = re.sub(r'(?s)(\\begin\{minipage)(.*?)(\\end\{minipage\})', r'', l)
+    l = re.sub(r'(?s)(\\begin\{enumerate)(.*?)(\\end\{enumerate\})', r'', l)
+    l = re.sub(r'(?s)(cite\{)(.*?)(\})', r'[]', l)
+    l = re.sub(r'(?s)(autoref\{)(.*?)(\})', r'[]', l)
+    l = re.sub(r'(?s)(vspace\{)(.*?)(\})', r'', l)
+    l = l.replace('\\noindent', '')
+    l = l.replace('\\bf', '')
+
+    l = l.replace("\\%", "%")
+    l = l.replace("\\emph{", "")
+    l = l.replace("\\cc{", "")
+    l = l.replace("\\PP{", "")
+    l = l.replace("\\mbox{", "")
+    l = l.replace("{", "")
+    l = l.replace("}", "")
+    l = l.replace("~", " ")
+    l = l.replace("\\,", " ")
+    l = l.replace("\\X", "x")
+    l = l.replace("\\&", "&")
+    l = l.replace("\\@", "")
+    l = l.replace("\\$", "$")
+    l = l.replace("---", " -- ")
+    l = l.replace("--", "-")
+    l = l.replace("``", "'")
+    l = l.replace("''", "'")
+    l = l.replace("\\ie", "i.e.")
+    l = l.replace("\\eg", "e.g.")
+    l = l.replace("\\etal", " et al.")
+    l = l.replace("\\Bs", " B/s")
+    l = l.replace("\\KBs", " KB/s")
+    l = l.replace("\\MBs", " MB/s")
+    l = l.replace("\\GBs", " GB/s")
+    l = l.replace("\\KB", " KB")
+    l = l.replace("\\MB", " MB")
+    l = l.replace("\\GB", " GB")
+    l = l.replace("\\TB", " TB")
+    l = l.replace("\\B", " B")
+    l = l.replace("\\K", " K")
+    l = l.replace("\\M", " M")
+    l = l.replace("\\T", " T")
+    l = l.replace("\\", "")
+    return l
+
 
 def text_checker(text):
     warning = ['XXX', 'TODO', '??', 'BL']
     words = ' / '.join(warning)
-    print (f'{bcolors.FAIL}Please check following words in the paper: {words}{bcolors.ENDC}')
+    print (f'{bcolors.FAIL}Please check following words in the paper: {words}{bcolors.ENDC}', file=sys.stderr)
     for w in warning:
         c = text.count(w)
         if c > 0:
@@ -160,7 +156,7 @@ def text_checker(text):
 content = ''
 for f in files:
     content += str(f) + '\n'
-    content += ext_text(f) + '\n\n'
+    content += extract_text(f) + '\n\n'
 
 print (content)
 text_checker(content)
