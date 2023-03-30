@@ -16,12 +16,6 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-if len(sys.argv) != 2:
-    print("[usage] %s [p.tex]" % sys.argv[0])
-    exit(0)
-
-pn_main = sys.argv[1]
-
 def uppercase_cond(value):
     if value[0].islower():
         return value
@@ -70,12 +64,6 @@ def get_sys(tex):
         exit(1)
     return tok[0]
 
-pn_main_text = open(pn_main).read()
-kw = get_keywords(pn_main_text)
-files = get_latex_files(pn_main_text)
-
-remove_prefix = ['section', 'subsection', 'labels:', 'PP', 'labelss:', 'labelfig:']
-
 def extract_text(f):
     textlines = []
     for l in open(f):
@@ -87,7 +75,7 @@ def extract_text(f):
 
         if "{abstract}" in l:
             continue
-    
+
         for k, v in kw.items():
             l = l.replace("\\%s" % k, v)
         textlines.append(l)
@@ -95,15 +83,16 @@ def extract_text(f):
     l = ' '.join(textlines)
     l = re.sub(r'(?s)(\\section\{)(.*?)(\})', r'', l)
     l = re.sub(r'(?s)(\\subsection\{)(.*?)(\})', r'', l)
-    l = re.sub(r'(?s)(\\label\{)(.*?)(\})', r'[]', l)
+    l = re.sub(r'(?s)(\\subsubsection\{)(.*?)(\})', r'', l)
+    l = re.sub(r'(?s)(\\label\{)(.*?)(\})', r'', l)
     l = re.sub(r'(?s)(\\footnote\{)(.*?)(\})', r'[footnote]', l)
     l = re.sub(r'(?s)(\\begin\{figure)(.*?)(\\end\{figure\})', r'', l)
     l = re.sub(r'(?s)(\\begin\{figure\*)(.*?)(\\end\{figure\*\})', r'', l)
     l = re.sub(r'(?s)(\\begin\{itemize)(.*?)(\\end\{itemize\})', r'', l)
     l = re.sub(r'(?s)(\\begin\{minipage)(.*?)(\\end\{minipage\})', r'', l)
     l = re.sub(r'(?s)(\\begin\{enumerate)(.*?)(\\end\{enumerate\})', r'', l)
-    l = re.sub(r'(?s)(cite\{)(.*?)(\})', r'[]', l)
-    l = re.sub(r'(?s)(autoref\{)(.*?)(\})', r'[]', l)
+    l = re.sub(r'(?s)(cite\{)(.*?)(\})', r'[cite]', l)
+    l = re.sub(r'(?s)(autoref\{)(.*?)(\})', r'[ref]', l)
     l = re.sub(r'(?s)(vspace\{)(.*?)(\})', r'', l)
     l = l.replace('\\noindent', '')
     l = l.replace('\\bf', '')
@@ -153,10 +142,25 @@ def text_checker(text):
         if c > 0:
             print (f'{bcolors.WARNING}[Warning] {w} is written {c} times in the paper!!{bcolors.ENDC}', file=sys.stderr)
 
-content = ''
-for f in files:
-    content += str(f) + '\n'
-    content += extract_text(f) + '\n\n'
 
-print (content)
-text_checker(content)
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("[usage] %s [p.tex]" % sys.argv[0])
+        exit(0)
+
+    pn_main = sys.argv[1]
+
+    pn_main_text = open(pn_main).read()
+    kw = get_keywords(pn_main_text)
+    files = get_latex_files(pn_main_text)
+
+    remove_prefix = ['section', 'subsection', 'labels:', 'PP', 'labelss:', 'labelfig:']
+
+    for f in files:
+        content = extract_text(f)
+
+        print (f'{bcolors.OKBLUE}[{str(f)}]{bcolors.ENDC}', file=sys.stderr)
+        print (content)
+        print ("\n\n")
+
+        text_checker(content)
