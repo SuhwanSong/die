@@ -81,6 +81,10 @@ def extract_text(f):
         textlines.append(l)
 
     l = ' '.join(textlines)
+
+    l = re.sub(r'(?s)(\\BL\{)(.*?)(\})', r'', l)
+    l = re.sub(r'(?s)(\\TODO\{)(.*?)(\})', r'', l)
+
     l = re.sub(r'(?s)(\\section\{)(.*?)(\})', r'', l)
     l = re.sub(r'(?s)(\\subsection\{)(.*?)(\})', r'', l)
     l = re.sub(r'(?s)(\\subsubsection\{)(.*?)(\})', r'', l)
@@ -130,6 +134,10 @@ def extract_text(f):
     l = l.replace("\\M", " M")
     l = l.replace("\\T", " T")
     l = l.replace("\\", "")
+
+    # last cleanup
+    l = l.strip()
+    l = re.sub(r'.  +', '.\n\n', l)
     return l
 
 
@@ -161,6 +169,8 @@ if __name__ == "__main__":
 
         print (f'{bcolors.OKBLUE}[{str(f)}]{bcolors.ENDC}', file=sys.stderr)
         print (content)
-        print ("\n\n")
-
+        print ()
         text_checker(content)
+        print ()
+
+
